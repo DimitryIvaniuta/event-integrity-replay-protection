@@ -1,0 +1,50 @@
+plugins {
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.dependency.management)
+    id 'java'
+}
+
+group = "com.github.dimitryivaniuta.gateway"
+version = "0.1.0"
+description = "Event Integrity + Replay Protection (HMAC signatures, key rotation, Redis TTL dedup, Kafka consumer validation)"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.actuator
+    implementation libs.spring.boot.starter.validation
+
+    implementation libs.spring.kafka
+
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.postgresql
+    implementation libs.flyway.core
+
+    implementation libs.spring.boot.starter.data.redis
+
+    implementation libs.micrometer.registry.prometheus
+    implementation libs.jackson.databind
+
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.kafka.test
+    testImplementation libs.awaitility
+    testImplementation libs.testcontainers.junit
+    testImplementation libs.testcontainers.postgresql
+    testImplementation libs.testcontainers.redis
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
