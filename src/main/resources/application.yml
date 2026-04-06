@@ -1,0 +1,62 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: event-integrity-replay-protection
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/event_integrity
+    username: app
+    password: app
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: secure-events-consumer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  kafka:
+    topic: secure-events
+    dlt-topic: secure-events.dlt
+  replay-protection:
+    ttl: 7d
+  validation:
+    max-event-age: 15m
+    max-future-skew: 2m
+  admin:
+    api-key: change-me-admin-key
+
+security:
+  hmac:
+    activeKeyId: "k2"
+    keys:
+      k1: "ZGV2LXNlY3JldC1wbGVhc2UtY2hhbmdlLWsxLTMyYnl0ZXMhIQ=="
+      k2: "ZGV2LXNlY3JldC1wbGVhc2UtY2hhbmdlLWsyLTMyYnl0ZXMhIQ=="
