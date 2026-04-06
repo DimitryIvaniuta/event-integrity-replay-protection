@@ -1,0 +1,148 @@
+{
+  "info": {
+    "name": "Event Integrity + Replay Protection",
+    "_postman_id": "f17d8d39-df9e-46dd-ae9e-0b299d62ee2e",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Publish valid event",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/events/publish",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "events",
+            "publish"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"eventType\": \"OrderCreated\",\n  \"producerId\": \"api\",\n  \"aggregateId\": \"order-123\",\n  \"payload\": {\n    \"orderId\": \"order-123\",\n    \"amount\": \"100.00\",\n    \"currency\": \"PLN\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Publish raw forged envelope",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Admin-Api-Key",
+            "value": "{{adminApiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/events/publish-raw",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "events",
+            "publish-raw"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"envelope\": {\n    \"version\": 1,\n    \"eventId\": \"11111111-1111-1111-1111-111111111111\",\n    \"eventType\": \"OrderCreated\",\n    \"occurredAt\": \"2026-04-06T10:00:00Z\",\n    \"producerId\": \"manual-test\",\n    \"aggregateId\": \"order-forged-1\",\n    \"payload\": {\n      \"orderId\": \"order-forged-1\",\n      \"amount\": \"1.00\",\n      \"currency\": \"PLN\"\n    },\n    \"keyId\": \"k2\",\n    \"signature\": \"forged-signature\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Publish raw stale envelope",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Admin-Api-Key",
+            "value": "{{adminApiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/events/publish-raw",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "events",
+            "publish-raw"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"envelope\": {\n    \"version\": 1,\n    \"eventId\": \"22222222-2222-2222-2222-222222222222\",\n    \"eventType\": \"OrderCreated\",\n    \"occurredAt\": \"2020-01-01T00:00:00Z\",\n    \"producerId\": \"manual-test\",\n    \"aggregateId\": \"order-stale-1\",\n    \"payload\": {\n      \"orderId\": \"order-stale-1\",\n      \"amount\": \"2.00\",\n      \"currency\": \"PLN\"\n    },\n    \"keyId\": \"k2\",\n    \"signature\": \"invalid-stale-signature\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "List received events",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Admin-Api-Key",
+            "value": "{{adminApiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/events/received",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "events",
+            "received"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List rejected events",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Admin-Api-Key",
+            "value": "{{adminApiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/events/rejected",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "events",
+            "rejected"
+          ]
+        }
+      }
+    }
+  ]
+}
